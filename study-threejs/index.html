@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * { outline: 0; margin: 0; padding: 0; box-sizing: border-box;}
+        .canvas-outer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .canvas-outer span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            font-weight: 700;
+            z-index: 1;
+        }
+        .canvas-outer #canvas {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* #canvas {width: 300px; height: 300px;} */
+    </style>
+</head>
+<body>
+    <div class="canvas-outer">
+        <canvas id="canvas" width="800" height="800"></canvas>
+    </div>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.skypack.dev/three@0.136.0/build/three.module.js",
+            "OrbitControls": "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js",
+            "GLTFLoader": "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js"
+          }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import {GLTFLoader} from 'GLTFLoader';
+        // import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        let scene = new THREE.Scene();
+        let renderer = new THREE.WebGLRenderer({
+            canvas : document.querySelector('#canvas'),
+            antialias : true
+        });
+        renderer.outputEncoding = THREE.sRGBEncoding;
+
+        // PerspectiveCamera 원근법 존재 
+        // OrthographicCamera 원근법 무시 
+        let camera = new THREE.PerspectiveCamera(30, 1); 
+        camera.position.set(0,0,3) // x y z 위치
+
+        // AmbientLight 
+        // PointLight
+        // DirectionalLight
+        scene.background = new THREE.Color('transparent');
+        let light = new THREE.AmbientLight(0xdddddd, 5);
+        scene.add(light);
+        
+        
+        let loader = new GLTFLoader();
+        loader.load('stylized__rock/scene.gltf', function(gltf){
+            scene.add(gltf.scene);
+            function animate(){
+                requestAnimationFrame(animate)
+                // gltf.scene.rotation.x -= 0.05;
+                gltf.scene.rotation.y -= 0.02;
+                // gltf.scene.rotation.z -= 0.05;
+                renderer.render(scene, camera);
+            }
+            animate();
+        });
+        
+        /* OrbitControl 공부하기 */ 
+    </script>
+</body>
+</html>
